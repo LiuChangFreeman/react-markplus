@@ -1,17 +1,17 @@
-import { ConfigProvider } from "antd";
+import {ConfigProvider} from "antd";
 import localforage from "localforage";
-import { autoRun } from "manate";
-import { auto } from "manate/react";
-import React, { useEffect, useRef } from "react";
+import {autoRun} from "manate";
+import {auto} from "manate/react";
+import React, {useEffect, useRef} from "react";
 import waitFor from "wait-for-async";
 
-import MarkPlus, { defaultToolbarItems, MarkPlusRef } from "../src/index.tsx";
-import PreferencesModal from "./preferences-modal.tsx";
-import { Store } from "./store.ts";
+import MarkPlus, {defaultToolbarItems, MarkPlusRef} from "../src/index.tsx";
+import PreferencesModal from './preferences-modal.tsx';
+import {Store} from "./store.ts";
 
 const App = (props: { store: Store }) => {
-  const { store } = props;
-  const { preferences } = store;
+  const {store} = props;
+  const {preferences} = store;
 
   // `markPlusRef` here is just for demo purpose, we don't need it
   const markPlusRef = useRef<MarkPlusRef | null>(null);
@@ -20,7 +20,14 @@ const App = (props: { store: Store }) => {
   const [markdown, setMarkdown] = React.useState("");
   useEffect(() => {
     const loadSampleData = async () => {
-      const r = await fetch("sample.md");
+      const params = new URLSearchParams(window.location.search);
+      let uri = params.get('uri');
+      if (uri) {
+        uri = decodeURIComponent(uri)
+      } else {
+        uri = "sample.md"
+      }
+      const r = await fetch(uri);
       const text = await r.text();
       setMarkdown(text);
       const store = markPlusRef.current?.getStore();
@@ -116,7 +123,7 @@ const App = (props: { store: Store }) => {
           },
         }}
       >
-        <PreferencesModal store={store} />
+        <PreferencesModal store={store}/>
       </ConfigProvider>
     </>
   );
